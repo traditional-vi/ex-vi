@@ -220,7 +220,7 @@ main(int argc, char *argv[])
 	/*
 	 * Initialize as though the editor had just started.
 	 */
-	fendcore = (line *) sbrk(0);
+	fendcore = (line *) sbreak(0);
 	dot = zero = dol = fendcore;
 	one = zero + 1;
 	endcore = fendcore - 2;
@@ -259,7 +259,7 @@ main(int argc, char *argv[])
 	/*
 	 * Allocate space for the line pointers from the temp file.
 	 */
-	if ((char *) sbrk(H.Flines * sizeof (line)) == (char *) -1)
+	if ((char *) sbreak(H.Flines * sizeof (line)) == (char *) -1)
 		/*
 		 * Good grief.
 		 */
@@ -876,6 +876,7 @@ syserror(void)
 /*
  * Must avoid stdio because expreserve uses sbrk to do memory
  * allocation and stdio uses malloc.
+ * TODO(jh 2023): allow stdio, sbrk is gone
  */
 /*
  * I do not know whether vsprintf() uses malloc() or not.

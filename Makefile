@@ -79,7 +79,7 @@
 # Destinations for installation. $(PRESERVEDIR) is used for recovery files.
 # It will get mode 1777.
 #
-PREFIX		= /usr/local
+PREFIX		= /home/j/ex
 BINDIR		= $(PREFIX)/bin
 LIBEXECDIR	= $(PREFIX)/libexec
 MANDIR		= $(PREFIX)/share/man
@@ -94,7 +94,7 @@ DESTDIR		=
 #
 # A BSD-like install program. GNU install will fit well here, too.
 #
-INSTALL		= /usr/ucb/install
+INSTALL		= /usr/bin/install
 
 #
 # Compiler and linker flags.
@@ -151,21 +151,6 @@ FEATURES	= -DLISPCODE -DCHDIR -DFASTTAG -DUCVISUAL -DMB -DBIT8
 #LANGMSG		= -DLANGMSG -DCATNAME='"UNKNOWN"'
 
 #
-# For POSIX regular expressions, e.g. the star applied to subexpressions
-# as in \(ab\)* and localized regular expressions like [:class:], [.c.],
-# and [=c=], you need Caldera's 'UNIX(R) Regular Expression Library' or
-# the included derivative of it.
-#
-# Comment out the three following lines if you do not have it or if it
-# does not compile; it needs some advanced multibyte character support
-# (wchar.h, wctype.h, btowc() etc.) which is not provided by older
-# compilation environments.
-#
-REINC	= -I./libuxre -DUXRE
-RELIB	= -L./libuxre -luxre
-RETGT	= uxre
-
-#
 # VMUNIX should be correct for any modern Unix.
 #
 # Historic comments:
@@ -214,18 +199,9 @@ OSTYPE	= -DVMUNIX
 TERMLIB	= termlib
 
 #
-# Since ex uses sbrk() internally, a conflict with the libc's version of
-# malloc() must be avoided. There are two ways to work around this problem.
-# The first is to allocate a static pool for all malloc purposes. This will
-# work on any kind of system.
+# Malloc-based sbrk() substitution.
 #
-#MALLOC=malloc.o
-#
-# If mmap() can be used to allocate anonymous memory, this is the preferred
-# choice as it allows to grow memory dynamically as it is needed. This will
-# usually work unless you are compiling for a vector machine or another
-# unusual enviroment.
-MALLOC=mapmalloc.o
+MALLOC=sbreak.o
 
 ###############################################################################
 #                                                                             #
@@ -350,7 +326,7 @@ ex.pkg: all
 	rm -rf $(PKGROOT) $(PKGPROTO) $(PKGTEMP)/$@
 
 ex.o: config.h ex_argv.h ex.h ex_proto.h ex_temp.h ex_tty.h ex_tune.h
-ex.o: ex_vars.h libterm/libterm.h
+ex.o: ex_vars.h sbreak.h libterm/libterm.h
 ex_addr.o: config.h ex.h ex_proto.h ex_re.h ex_tune.h ex_vars.h
 ex_cmds.o: config.h ex_argv.h ex.h ex_proto.h ex_temp.h ex_tty.h ex_tune.h
 ex_cmds.o: ex_vars.h ex_vis.h libterm/libterm.h
@@ -372,7 +348,7 @@ ex_re.o: config.h ex.h ex_proto.h ex_re.h ex_tune.h ex_vars.h
 ex_set.o: config.h ex.h ex_proto.h ex_temp.h ex_tty.h ex_tune.h ex_vars.h
 ex_set.o: libterm/libterm.h
 ex_subr.o: config.h ex.h ex_proto.h ex_re.h ex_tty.h ex_tune.h ex_vars.h
-ex_subr.o: ex_vis.h libterm/libterm.h
+ex_subr.o: ex_vis.h sbreak.h libterm/libterm.h
 ex_tagio.o: config.h ex.h ex_proto.h ex_tune.h ex_vars.h
 ex_temp.o: config.h ex.h ex_proto.h ex_temp.h ex_tty.h ex_tune.h ex_vars.h
 ex_temp.o: ex_vis.h libterm/libterm.h

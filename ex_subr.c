@@ -83,6 +83,7 @@ static char sccsid[] = "@(#)ex_subr.c	1.41 (gritter) 12/25/06";
 #include "ex_re.h"
 #include "ex_tty.h"
 #include "ex_vis.h"
+#include "sbreak.h"
 
 short	lastsc;
 
@@ -490,14 +491,14 @@ morelines(void)
 			pg = 4096;
 		pg /= sizeof (line);
 	}
-	if ((char *)sbrk(pg * sizeof (line)) == (char *)-1)
+	if ((char *)sbreak(pg * sizeof (line)) == (char *)-1)
 		return (-1);
-	endcore += pg;
+	endcore = sbreak(0) - sizeof(line);
 	return (0);
 #else	/* !_SC_PAGESIZE */
-	if (sbrk(1024 * sizeof (line)) == (char *)-1)
+	if (sbreak(1024 * sizeof (line)) == (char *)-1)
 		return (-1);
-	endcore += 1024;
+	endcore = sbreak(0) - sizeof(line);
 	return (0);
 #endif	/* !_SC_PAGESIZE */
 }
@@ -701,6 +702,7 @@ void
 save(line *a1, register line *a2)
 {
 	register int more;
+	line *oldend = endcore;
 
 	if (!FIXUNDO)
 		return;
@@ -709,12 +711,16 @@ save(line *a1, register line *a2)
 		vudump("before save");
 #endif
 	undkind = UNDNONE;
-	undadot = dot;
 	more = (a2 - a1 + 1) - (unddol - dol);
 	while (more > (endcore - truedol))
 		if (morelines() < 0)
 			error(catgets(catd, 1, 180,
 		"Out of memory@saving lines for undo - try using ed"));
+	if (endcore != oldend) {
+		a1 += endcore - oldend;
+		a2 += endcore - oldend;
+	}
+	undadot = dot;
 	if (more)
 		(*(more > 0 ? copywR : copyw))(unddol + more + 1, unddol + 1,
 		    (truedol - unddol));

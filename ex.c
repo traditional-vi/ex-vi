@@ -87,6 +87,7 @@ static char sccsid[] = "@(#)ex.c	1.37 (gritter) 8/4/05";
 #include "ex_argv.h"
 #include "ex_temp.h"
 #include "ex_tty.h"
+#include "sbreak.h"
 
 #ifdef TRACE
 char	tttrace[]	= { '/','d','e','v','/','t','t','y','x','x',0 };
@@ -529,7 +530,7 @@ argend:
 	 * this as ed does, saving a little core, but it will probably
 	 * not often make much difference.
 	 */
-	fendcore = (line *) sbrk(0);
+	fendcore = (line *) sbreak(0);
 	endcore = fendcore - 2;
 
 #ifdef SIGTSTP

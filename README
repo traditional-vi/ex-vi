@@ -63,19 +63,8 @@ Prerequisites for ports to other systems are:
 
 - The system must provide an ANSI C-89 compiler and POSIX.1-1990 functions.
 
-- The system must provide an sbrk() call to increase the memory heap size.
-  If only a fake sbrk() call is provided that works by pre-allocating
-  several MB, vi will probably work too.
-
-- The system library must allow replacement of malloc() and printf() by the
-  versions provided by vi. For malloc(), it also must make its own internal
-  memory requests using the vi malloc(). Otherwise, vi will likely die with
-  a segmentation fault because the storage allocated by sbrk() interferes
-  with usual Unix library implementations of malloc().
-
-The last two requirements could probably be eliminated with some effort, but
-it would not result in any real improvements for usual the Unix platforms vi
-is targeted at, so it has not be done yet.
+- The system library must allow replacement of printf() by the version
+  provided by vi.
 
 
 Terminal capabilities
