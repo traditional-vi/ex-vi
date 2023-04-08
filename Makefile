@@ -79,7 +79,7 @@
 # Destinations for installation. $(PRESERVEDIR) is used for recovery files.
 # It will get mode 1777.
 #
-PREFIX		= /home/j/ex
+PREFIX		= /usr/local
 BINDIR		= $(PREFIX)/bin
 LIBEXECDIR	= $(PREFIX)/libexec
 MANDIR		= $(PREFIX)/share/man
